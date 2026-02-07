@@ -4,7 +4,9 @@ import { createPageUrl } from "../utils/createPageUrl";
 import { motion } from "framer-motion";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
+
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { CONTACT_INFO } from '../config/contact';
 
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -16,7 +18,6 @@ import L from "leaflet";
 
 // Leaflet marker icon fix (Vite/React)
 const ensureLeafletMarkerIcons = () => {
-  // TS-safe: Leaflet types don't expose _getIconUrl
   const proto = L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown };
   if ("_getIconUrl" in proto) {
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -48,7 +49,6 @@ type ContactInfoItem = {
 };
 
 export default function Kontakt() {
-  // ensure icons exactly once per mount
   useMemo(() => {
     ensureLeafletMarkerIcons();
     return null;
@@ -90,19 +90,19 @@ export default function Kontakt() {
     {
       icon: MapPin,
       title: "Adres",
-      lines: ["ul. Przykładowa 123", "00-000 Miejscowość"],
+      lines: [CONTACT_INFO.address.street, `${CONTACT_INFO.address.postalCode} ${CONTACT_INFO.address.city}`],
     },
     {
       icon: Phone,
       title: "Telefon",
-      lines: ["+48 123 456 789"],
-      link: "tel:+48123456789",
+      lines: [CONTACT_INFO.phone],
+      link: `tel:${CONTACT_INFO.phoneRaw}`,
     },
     {
       icon: Mail,
       title: "E-mail",
-      lines: ["kontakt@sabra.pl"],
-      link: "mailto:kontakt@sabra.pl",
+      lines: [CONTACT_INFO.email],
+      link: `mailto:${CONTACT_INFO.email}`,
     },
     {
       icon: Clock,
@@ -317,9 +317,9 @@ export default function Kontakt() {
             <Popup>
               <strong>Sabra - Hodowla Strusi Afrykańskich</strong>
               <br />
-              ul. Przykładowa 123
+              {CONTACT_INFO.address.street}
               <br />
-              00-000 Miejscowość
+              {CONTACT_INFO.address.postalCode} {CONTACT_INFO.address.city}
             </Popup>
           </Marker>
         </MapContainer>
